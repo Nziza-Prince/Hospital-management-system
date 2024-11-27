@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 interface DashboardLayoutProps {
   role: 'admin' | 'doctor' | 'patient';
-  user: {
-    name: string;
-    role: string;
-    avatar?: string;
-  };
 }
 
-export default function DashboardLayout({ role, user }: DashboardLayoutProps) {
+export default function DashboardLayout({ role }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (!user.role) {
+    navigate('/login');
+    return null;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">

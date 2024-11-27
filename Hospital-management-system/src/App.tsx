@@ -4,13 +4,9 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import AdminDashboard from './pages/dashboard/admin/AdminDashboard';
-
-// Temporary user data for demonstration
-const adminUser = {
-  name: 'John Doe',
-  role: 'Administrator',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
+import DoctorDashboard from './pages/dashboard/doctor/DoctorDashboard';
+import PatientDashboard from './pages/dashboard/patient/PatientDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -23,10 +19,37 @@ function App() {
         {/* Admin Routes */}
         <Route
           path="/admin"
-          element={<DashboardLayout role="admin" user={adminUser} />}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <DashboardLayout role="admin" />
+            </ProtectedRoute>
+          }
         >
           <Route index element={<AdminDashboard />} />
-          {/* Add other admin routes here */}
+        </Route>
+
+        {/* Doctor Routes */}
+        <Route
+          path="/doctor"
+          element={
+            <ProtectedRoute allowedRoles={['doctor']}>
+              <DashboardLayout role="doctor" />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DoctorDashboard />} />
+        </Route>
+
+        {/* Patient Routes */}
+        <Route
+          path="/patient"
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <DashboardLayout role="patient" />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<PatientDashboard />} />
         </Route>
       </Routes>
     </Router>

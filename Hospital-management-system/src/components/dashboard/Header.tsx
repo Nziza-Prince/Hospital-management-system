@@ -1,5 +1,6 @@
-import { Bell, Search, Menu } from 'lucide-react';
+import { Bell, Search, Menu, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { logout } from '../../utils/auth';
 
 interface HeaderProps {
   user: {
@@ -63,11 +64,8 @@ export default function Header({ user, onMenuClick }: HeaderProps) {
             </button>
           </div>
 
-          <div className="relative inline-block">
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <img
                 className="h-8 w-8 rounded-full"
                 src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`}
@@ -76,6 +74,13 @@ export default function Header({ user, onMenuClick }: HeaderProps) {
               <span className="hidden lg:flex lg:items-center">
                 <span className="text-sm font-medium text-gray-700">{user.name}</span>
               </span>
+            </div>
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="hidden lg:inline">Logout</span>
             </button>
           </div>
         </div>

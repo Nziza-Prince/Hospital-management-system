@@ -1,10 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import AuthLayout from '../../components/auth/AuthLayout';
 import RoleSelector from '../../components/auth/RoleSelector';
-import { RegisterFormData, registerSchema } from '../../types/auth';
+import { RegisterFormData, registerSchema } from '../../types/Auth';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -12,7 +11,6 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     setValue,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -22,23 +20,20 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', data);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      // Redirect based on role
-      const redirectMap = {
-        admin: '/admin',
-        doctor: '/doctor',
-        patient: '/patient'
-      };
-      navigate(redirectMap[data.role]);
-    } catch (error) {
-      setError('root', {
-        message: 'Registration failed. Please try again.'
-      });
-    }
+    // Mock registration - store user data and navigate
+    localStorage.setItem('user', JSON.stringify({
+      name: data.name,
+      email: data.email,
+      role: data.role
+    }));
+    
+    // Redirect based on role
+    const redirectMap = {
+      admin: '/admin',
+      doctor: '/doctor',
+      patient: '/patient'
+    };
+    navigate(redirectMap[data.role]);
   };
 
   return (
@@ -47,7 +42,7 @@ export default function RegisterPage() {
       description="Join us to access our healthcare services."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
+        <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Full name
           </label>
@@ -55,15 +50,15 @@ export default function RegisterPage() {
             id="name"
             type="text"
             {...register('name')}
-            className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             placeholder="Enter your full name"
           />
           {errors.name && (
-            <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>
+            <p className="text-sm text-red-600">{errors.name.message}</p>
           )}
         </div>
 
-        <div>
+        <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email address
           </label>
@@ -71,15 +66,15 @@ export default function RegisterPage() {
             id="email"
             type="email"
             {...register('email')}
-            className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             placeholder="Enter your email"
           />
           {errors.email && (
-            <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+            <p className="text-sm text-red-600">{errors.email.message}</p>
           )}
         </div>
 
-        <div>
+        <div className="space-y-2">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
@@ -87,15 +82,15 @@ export default function RegisterPage() {
             id="password"
             type="password"
             {...register('password')}
-            className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             placeholder="Create a password"
           />
           {errors.password && (
-            <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
+            <p className="text-sm text-red-600">{errors.password.message}</p>
           )}
         </div>
 
-        <div>
+        <div className="space-y-2">
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
             Confirm password
           </label>
@@ -103,11 +98,11 @@ export default function RegisterPage() {
             id="confirmPassword"
             type="password"
             {...register('confirmPassword')}
-            className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             placeholder="Confirm your password"
           />
           {errors.confirmPassword && (
-            <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
           )}
         </div>
 
@@ -117,17 +112,11 @@ export default function RegisterPage() {
           error={errors.role?.message}
         />
 
-        {errors.root && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-600">{errors.root.message}</p>
-          </div>
-        )}
-
         <div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? 'Creating account...' : 'Create account'}
           </button>
@@ -135,7 +124,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-500">
             Sign in
           </Link>
         </p>
