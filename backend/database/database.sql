@@ -55,3 +55,4 @@ CREATE TABLE admin_tasks (
     assigned_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('pending', 'completed') NOT NULL
 );
+
