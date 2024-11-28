@@ -13,7 +13,7 @@ export default function DashboardLayout({ role }: DashboardLayoutProps) {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   if (!user.role) {
-    navigate('/login');
+    navigate('/login',{replace:true});
     return null;
   }
 

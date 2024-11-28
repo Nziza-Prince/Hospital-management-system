@@ -4,6 +4,10 @@ export interface User {
   email: string;
   role: 'admin' | 'doctor' | 'patient';
   avatar?: string;
+  date_of_birth: string,
+  gender: string,
+  insurance_number: string
+
 }
 
 export interface NavItem {

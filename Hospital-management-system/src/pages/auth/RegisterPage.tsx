@@ -1,15 +1,20 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import AuthLayout from '../../components/auth/AuthLayout';
 import { RegisterFormData, registerSchema } from '../../types/Auth';
+import axios from 'axios';
+import { authService } from '../../lib/auth';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
+  const [generalError, setGeneralError] = useState<string | null>(null);
+  
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors, isSubmitting }
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -18,17 +23,27 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    // Mock registration - store user data and navigate
-    localStorage.setItem('user', JSON.stringify({
-      name: data.name,
-      email: data.email,
-      role: 'patient',
-      date_of_birth: data.date_of_birth,
-      gender: data.gender,
-      insurance_number: data.insurance_number
-    }));
-    
-    navigate('/patient');
+    try {
+      setGeneralError(null);
+      
+      await authService.register({
+        user_name: data.user_name,
+        email: data.email,
+        password: data.password,
+        role: 'patient',
+        date_of_birth: data.date_of_birth,
+        gender: data.gender,
+        insurance_number: data.insurance_number,
+      });
+      console.log(data);
+      navigate("/patient",{replace:true});
+    } catch (err:any){
+      console.error('Registration error:', err);
+      setGeneralError(
+        err.response?.data?.error || 
+        'An error occurred during registration. Please try again.'
+      );
+    }
   };
 
   return (
@@ -37,19 +52,25 @@ export default function RegisterPage() {
       description="Join us to access our healthcare services."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {generalError && (
+          <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">
+            {generalError}
+          </div>
+        )}
+
         <div className="space-y-2">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="user_name" className="block text-sm font-medium text-gray-700">
             Full name
           </label>
           <input
-            id="name"
+            id="user_name"
             type="text"
-            {...register('name')}
+            {...register('user_name')}
             className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             placeholder="Enter your full name"
           />
-          {errors.name && (
-            <p className="text-sm text-red-600">{errors.name.message}</p>
+          {errors.user_name && (
+            <p className="text-sm text-red-600">{errors.user_name.message}</p>
           )}
         </div>
 
