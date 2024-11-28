@@ -55,7 +55,7 @@ export default function Contact() {
                     <dt className="sr-only">Address</dt>
                     <dd>123 Healthcare Ave</dd>
                     <dd>Medical District</dd>
-                    <dd>New York, NY 10001</dd>
+                    <dd>Kigali, KGL 10001</dd>
                   </div>
                 </dl>
               </div>

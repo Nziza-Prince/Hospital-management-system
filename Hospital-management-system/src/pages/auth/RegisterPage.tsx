@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../../components/auth/AuthLayout';
-import RoleSelector from '../../components/auth/RoleSelector';
 import { RegisterFormData, registerSchema } from '../../types/Auth';
 
 export default function RegisterPage() {
@@ -10,7 +9,6 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -24,21 +22,18 @@ export default function RegisterPage() {
     localStorage.setItem('user', JSON.stringify({
       name: data.name,
       email: data.email,
-      role: data.role
+      role: 'patient',
+      date_of_birth: data.date_of_birth,
+      gender: data.gender,
+      insurance_number: data.insurance_number
     }));
     
-    // Redirect based on role
-    const redirectMap = {
-      admin: '/admin',
-      doctor: '/doctor',
-      patient: '/patient'
-    };
-    navigate(redirectMap[data.role]);
+    navigate('/patient');
   };
 
   return (
     <AuthLayout
-      title="Create an account"
+      title="Create a patient account"
       description="Join us to access our healthcare services."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -75,6 +70,56 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-2">
+          <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700">
+            Date of Birth
+          </label>
+          <input
+            id="date_of_birth"
+            type="date"
+            {...register('date_of_birth')}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+          {errors.date_of_birth && (
+            <p className="text-sm text-red-600">{errors.date_of_birth.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+            Gender
+          </label>
+          <select
+            id="gender"
+            {...register('gender')}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          {errors.gender && (
+            <p className="text-sm text-red-600">{errors.gender.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="insurance_number" className="block text-sm font-medium text-gray-700">
+            Insurance Number
+          </label>
+          <input
+            id="insurance_number"
+            type="text"
+            {...register('insurance_number')}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            placeholder="Enter your insurance number"
+          />
+          {errors.insurance_number && (
+            <p className="text-sm text-red-600">{errors.insurance_number.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
@@ -105,12 +150,6 @@ export default function RegisterPage() {
             <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
           )}
         </div>
-
-        <RoleSelector
-          value={register('role').value}
-          onChange={(value) => setValue('role', value as 'admin' | 'doctor' | 'patient')}
-          error={errors.role?.message}
-        />
 
         <div>
           <button

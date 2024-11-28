@@ -16,7 +16,18 @@ export default function LoginPage() {
     localStorage.setItem('user', JSON.stringify({
       name: 'John Doe',
       email,
-      role
+      role,
+      // Mock data based on role
+      ...(role === 'doctor' && {
+        specialty: 'Cardiology',
+        license_number: 'MD12345',
+        experience_years: 10
+      }),
+      ...(role === 'patient' && {
+        date_of_birth: '1990-01-01',
+        gender: 'male',
+        insurance_number: 'INS123456'
+      })
     }));
     
     // Redirect based on role
@@ -67,6 +78,7 @@ export default function LoginPage() {
         <RoleSelector
           value={role}
           onChange={setRole}
+          showAdminDoctor={true}
         />
 
         <div>
@@ -77,6 +89,13 @@ export default function LoginPage() {
             Sign in
           </button>
         </div>
+
+        <p className="text-center text-sm text-gray-600">
+          New patient?{' '}
+          <a href="/register" className="font-semibold text-blue-600 hover:text-blue-500">
+            Create an account
+          </a>
+        </p>
       </form>
     </AuthLayout>
   );
